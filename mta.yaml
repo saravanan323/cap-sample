@@ -13,7 +13,7 @@ build-parameters:
 modules:
   - name: sales_order-srv
     type: nodejs
-    path: srv
+    path: gen/srv
     parameters:
       instances: 1
       buildpack: nodejs_buildpack
@@ -24,9 +24,23 @@ modules:
         properties:
           srv-url: ${default-url}
     requires:
+      - name: sales_order-db
       - name: sales_order-destination
 
+  - name: sales_order-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+    requires:
+      - name: sales_order-db
+
 resources:
+  - name: sales_order-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
   - name: sales_order-destination
     type: org.cloudfoundry.managed-service
     parameters:
