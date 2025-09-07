@@ -19,11 +19,11 @@
   "devDependencies": {
     "@cap-js/cds-types": "^0.13.0",
     "@cap-js/sqlite": "^2",
+    "@sap/cds-dk": "^9",
     "cds-plugin-ui5": "^0.13.0"
   },
   "scripts": {
-    "start": "cds-serve",
-    "watch-business_partner": "cds watch --open app.businesspartner/index.html?sap-ui-xx-viewCache=false --livereload false"
+    "start": "cds-serve"
   },
   "cds": {
     "requires": {
@@ -51,13 +51,10 @@
         },
         "csrf": true,
         "csrfInBatch": true
+      },
+      "db": {
+        "kind": "hana"
       }
     }
-  },
-  "workspaces": [
-    "app/*"
-  ],
-  "sapux": [
-    "app/business_partner"
-  ]
+  }
 }

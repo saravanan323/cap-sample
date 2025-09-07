@@ -1,7 +1,7 @@
 using s4_hana_test from './external/s4_hana_test.cds';
 
 service SalesOrderService {
-    @readonly
+    // @readonly
     entity A_SalesOrder as
         projection on s4_hana_test.A_SalesOrder {
             key SalesOrder,
