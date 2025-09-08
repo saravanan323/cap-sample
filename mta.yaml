@@ -1,7 +1,85 @@
 _schema-version: 3.3.0
 ID: sales_order
+description: A simple CAP project.
 version: 1.0.0
-description: "A simple CAP project."
+modules:
+  - name: sales_order-srv
+    type: nodejs
+    path: gen/srv
+    requires:
+      - name: sales_order-db
+      - name: sales_order-destination-service
+      - name: uaa_sales_order
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+    parameters:
+      buildpack: nodejs_buildpack
+      instances: 1
+    build-parameters:
+      builder: npm-ci
+  - name: sales_order-db-deployer
+    type: hdb
+    path: gen/db
+    requires:
+      - name: sales_order-db
+    parameters:
+      buildpack: nodejs_buildpack
+  - name: sales_order-destination-content
+    type: com.sap.application.content
+    requires:
+      - name: sales_order-destination-service
+        parameters:
+          content-target: true
+      - name: sales_order_html_repo_host
+        parameters:
+          service-key:
+            name: sales_order_html_repo_host-key
+      - name: uaa_sales_order
+        parameters:
+          service-key:
+            name: uaa_sales_order-key
+    parameters:
+      content:
+        instance:
+          destinations:
+            - Name: sales_order_sales_order_html_repo_host
+              ServiceInstanceName: sales_order-html5-app-host-service
+              ServiceKeyName: sales_order_html_repo_host-key
+              sap.cloud.service: sales_order
+            - Authentication: OAuth2UserTokenExchange
+              Name: sales_order_uaa_sales_order
+              ServiceInstanceName: sales_order-xsuaa-service
+              ServiceKeyName: uaa_sales_order-key
+              sap.cloud.service: sales_order
+          existing_destinations_policy: ignore
+    build-parameters:
+      no-source: true
+resources:
+  - name: sales_order-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+  - name: sales_order-destination-service
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+  - name: sales_order_html_repo_host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-name: sales_order-html5-app-host-service
+      service-plan: app-host
+  - name: uaa_sales_order
+    type: org.cloudfoundry.managed-service
+    parameters:
+      path: ./xs-security.json
+      service: xsuaa
+      service-name: sales_order-xsuaa-service
+      service-plan: application
 parameters:
   enable-parallel-deployments: true
 build-parameters:
@@ -10,39 +88,3 @@ build-parameters:
       commands:
         - npm ci
         - npx cds build --production
-modules:
-  - name: sales_order-srv
-    type: nodejs
-    path: gen/srv
-    parameters:
-      instances: 1
-      buildpack: nodejs_buildpack
-    build-parameters:
-      builder: npm-ci
-    provides:
-      - name: srv-api # required by consumers of CAP services (e.g. approuter)
-        properties:
-          srv-url: ${default-url}
-    requires:
-      - name: sales_order-db
-      - name: sales_order-destination
-
-  - name: sales_order-db-deployer
-    type: hdb
-    path: gen/db
-    parameters:
-      buildpack: nodejs_buildpack
-    requires:
-      - name: sales_order-db
-
-resources:
-  - name: sales_order-db
-    type: com.sap.xs.hdi-container
-    parameters:
-      service: hana
-      service-plan: hdi-shared
-  - name: sales_order-destination
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service: destination
-      service-plan: lite
