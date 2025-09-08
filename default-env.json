@@ -1,0 +1,19 @@
+{
+  "VCAP_SERVICES": {
+    "hana": [
+      {
+        "name": "sales_order-db",
+        "label": "hana",
+        "plan": "hdi-shared",
+        "credentials": {
+          "host": "6270c328-fa85-4ba5-9858-17a0c5b3a52f.hana.trial-us10.hanacloud.ondemand.com",
+          "port": 443,
+          "user": "51275F4BAB61453889380FD3047C4E14_27P39TXSB8QQJV2MZCQB3UZJX_RT",
+          "password": "Kn2qzUuaeZCcIm6NejTMrzi5YgZ7bF3EHXb0GxZu6j99d5k--gaUNGeH2ewexhhUXr8iOJ8jmGVWmr.4zqjPi48aOPDAp2fWFR67kjNGml8zGSH8xYNULqBEtqvD.DtR",
+          "schema": "51275F4BAB61453889380FD3047C4E14",
+          "url": "jdbc:sap://6270c328-fa85-4ba5-9858-17a0c5b3a52f.hana.trial-us10.hanacloud.ondemand.com:443?encrypt=true&validateCertificate=true&currentschema=51275F4BAB61453889380FD3047C4E14"
+        }
+      }
+    ]
+  }
+}
